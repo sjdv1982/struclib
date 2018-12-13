@@ -3,6 +3,8 @@ from seamless.silk.meta import meta, validator
 
 class StructureState(metaclass=meta):
     
+    version = "OK"
+
     # DTypes of atomic data and atomic state
     atomic_dtype = [
         ("model", 'uint16'),            
@@ -22,10 +24,14 @@ class StructureState(metaclass=meta):
         ("segid", "S4"),
         ("element", "S2")                  
     ]
-    atomic_state_dtype = [
-        ("obj", 'uint8')] + atomic_dtype + \
-        [("sele", 'uint8'), ("repr", 'uint16')
-    ]
+    # up to 255 objects   
+    atomic_state_dtype =  \
+        [("obj", 'uint8')] + \
+        atomic_dtype + \
+        [
+            ("sele", 'uint64'),   # up to 64 selections
+            ("repr", 'uint16')    # up to 16 representations
+        ]
 
     def __init__(self):
         import numpy as np        
@@ -41,10 +47,13 @@ class StructureState(metaclass=meta):
         self.PRIVATE_repr = ["cartoon", "spacefill", "lines", "sticks", "ball+sticks", "dots"]  
         
         # Names of selections
-        self.PRIVATE_sele = []
+        self.PRIVATE_sele = ["sele"]
     
     def parse_pdb(self, pdb, obj=None):
+        import warnings
         import Bio.PDB
+        from Bio.PDB.StructureBuilder import PDBConstructionWarning
+        warnings.simplefilter('ignore', PDBConstructionWarning)
         from io import StringIO
         import numpy as np
         
@@ -64,7 +73,7 @@ class StructureState(metaclass=meta):
         
         p = Bio.PDB.PDBParser()
         struc = p.get_structure(obj, pdb_obj)
-        natoms = len(list(struc.get_atoms()))
+        natoms = len(list(struc.get_atoms()))        
         new_statelen = len(self.atomstate) + natoms
         atomstate = np.zeros(new_statelen,dtype=self.atomstate.dtype)
         assert atomstate.dtype == self.atomstate.data.dtype
@@ -110,44 +119,69 @@ class StructureState(metaclass=meta):
         old_selearray = None
         sele_state = self.atomstate.data["sele"]
         try:
-            selenr = self.PRIVATE_sele.index(sele) + 1
-            old_selearray = (sele_state == selenr)  
-            sele_state[old_selearray] = 0
+            selenr = self.PRIVATE_sele.index(sele) + 1            
+            self.PRIVATE_unselect_noshift(sele)
         except ValueError:
             self.PRIVATE_sele.append(sele)
             selenr = len(self.PRIVATE_sele)
+            maxsel = 8 * sele_state.itemsize
+            if selenr >= maxsel:
+                raise ValueError("Maximum number of selections %d reached" % maxsel)
+        selebit = 1 << selenr
         dic = {key: self.atomstate.data[key] for key in self.atomstate.dtype.fields.keys() \
                if key not in ("obj", "repr")}
         objects = np.array([""] + self.PRIVATE_objects.data).astype("S")
         dic["all"] = np.ones(len(self.atomstate))
         dic["obj"] = objects[self.atomstate.data["obj"]]
-        for xselenr, xsele in enumerate(self.PRIVATE_sele):
+        for xselenr0, xsele in enumerate(self.PRIVATE_sele):
+            xselenr = xselenr0 + 1
             if xsele in dic or (xselenr == selenr and old_selearray is None):
                 continue
-            xselearray = (sele_state == (xselenr + 1) )
-            print("XSELE", xsele, xselearray.sum())
+            xselebit = 1 << xselenr
+            xselearray = (sele_state & xselebit).astype(bool)
             dic[xsele] = xselearray
         try:
             selearray = pd.eval(query, global_dict=dic, align_result=False, str_as_bytes=True)
             print("%d atoms selected" % selearray.sum())
-            sele_state[selearray] = selenr
-        except Exception:
+            sele_state[selearray] |= selebit
+        except:
             if old_selearray is not None:
-                sele_state[old_selearray] = selenr
-            
-        
-    def PRIVATE_get_sele(self, sele, none_is_all=False):
+                sele_state[old_selearray] |= selebit
+                    
+    def PRIVATE_unselect_noshift(self, sele):
         try:
             selenr = self.PRIVATE_sele.index(sele) + 1
         except ValueError:
-            if sele == "sele":
-                if none_is_all:
-                    return slice(None, None)
-                return None
-            else:
-                raise ValueError("Unknown selection '%s'" % sele)
+            raise ValueError("Unknown selection '%s'" % sele)
+        atomstate_sele = self.atomstate.data["sele"]
+        selebit = 1 << selenr
+        dt = atomstate_sele.dtype.type
+        cmpl_sele = ~dt(selebit)
+        atomstate_sele &= cmpl_sele
+        
+
+    def unselect(self, sele="sele"):
+        if sele == "sele":
+            return self.PRIVATE_unselect_noshift("sele")
+        try:
+            selenr = self.PRIVATE_sele.index(sele) + 1
+        except ValueError:
+            raise ValueError("Unknown selection '%s'" % sele)
+        atomstate_sele = self.atomstate.data["sele"]
+        dt = atomstate_sele.dtype.type
+        bits_to_keep = dt(2**selenr-1)
+        bits_to_shift = ~bits_to_keep
+        atomstate_sele[:] = ((atomstate_sele  >> 1) & bits_to_shift) | (atomstate_sele & bits_to_keep)
+        self.PRIVATE_sele.remove(sele)
+
+    def PRIVATE_get_sele(self, sele):
+        try:
+            selenr = self.PRIVATE_sele.index(sele) + 1
+        except ValueError:
+            raise ValueError("Unknown selection '%s'" % sele)
         atomstate = self.atomstate.data
-        selearray = (atomstate["sele"] == selenr)        
+        selebit = 1 << selenr
+        selearray = (atomstate["sele"] & selebit).astype(bool)
         return selearray
 
     def get_selection(self, sele="sele"):
@@ -155,8 +189,6 @@ class StructureState(metaclass=meta):
         import pandas as pd 
         from collections import OrderedDict
         sele_array = self.PRIVATE_get_sele(sele)
-        if sele_array is None:
-            return
         atomstate = self.atomstate.data
         arr_atomstate = OrderedDict()
         for key in self.atomstate.dtype.fields.keys():
@@ -172,11 +204,11 @@ class StructureState(metaclass=meta):
         return pd.DataFrame(arr_atomstate).iloc[sele_array]
 
     def PRIVATE_change_repr(self, representation, sele, op):
-        sele_array = self.PRIVATE_get_sele(sele, none_is_all=True)
+        sele_array = self.PRIVATE_get_sele(sele)
         rep = self.atomstate.data["repr"]
         if representation == "all":
             assert op == "hide"
-            rep[sele_array] = 0
+            rep[:] = 0
             return
         reprnr = self.PRIVATE_repr.index(representation)
         repr_bit = 1 << reprnr
@@ -221,3 +253,7 @@ class StructureState(metaclass=meta):
                 }
             })
         return result
+
+StructureState() #for type inference
+
+result = StructureState.schema.dict # we have to put this file in a Transformer, until Seamless will support high-level Python modules
