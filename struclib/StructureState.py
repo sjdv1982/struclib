@@ -376,8 +376,8 @@ class StructureState(metaclass=meta):
         atomstate = self.atomstate.data
         arr_atomstate = OrderedDict()
         for key in self.atomstate.dtype.fields.keys():
-            if key in ("sele", "repr"):
-                continue            
+            if key in ("sele", "repr", "color"):
+                continue                        
             v = atomstate[key]
             if key == "obj":
                 names = [""] + self.PRIVATE_objects.data
