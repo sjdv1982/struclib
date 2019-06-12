@@ -200,8 +200,9 @@ class StructureState(metaclass=meta):
     }.keys())
 
     def __init__(self):
-        import numpy as np        
-        atomic_state_dtype = np.dtype(self.atomic_state_dtype, align=True)
+        import numpy as np
+        atomic_state_dtype = [tuple(x) for x in self.atomic_state_dtype]
+        atomic_state_dtype = np.dtype(atomic_state_dtype, align=True)
 
         # Array of the atomic state
         self.atomstate = np.zeros(0, dtype=atomic_state_dtype)
@@ -468,6 +469,6 @@ class StructureState(metaclass=meta):
                 results[obj] = result
         return results
 
-StructureState() #for type inference
+test = StructureState() #for type inference
 
 result = StructureState.schema.dict # we have to put this file in a Transformer, until Seamless will support high-level Python modules
