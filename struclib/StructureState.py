@@ -291,10 +291,11 @@ class StructureState(metaclass=meta):
         self.atomstate = atomstate
         
     def select(self, query, sele=None):
+        import seamless
+        pass
         if sele is None:
             sele = self.PRIVATE_active_selection
         self.PRIVATE_active_selection = sele        
-        import pandas as pd # Must be patched version of pandas!! spin off pandas.core.computation? "pandeval"?
         import numpy as np
         old_selearray = None
         sele_state = self.atomstate.data["sele"]
@@ -321,7 +322,7 @@ class StructureState(metaclass=meta):
             xselearray = (sele_state & xselebit).astype(bool)
             dic[xsele] = xselearray
         try:
-            selearray = pd.eval(query, global_dict=dic, align_result=False, str_as_bytes=True)
+            selearray = seamless.pandeval.eval(query, global_dict=dic, align_result=False, str_as_bytes=True)
             print("%d atoms selected" % selearray.sum())
             sele_state[selearray] |= selebit
         except:
