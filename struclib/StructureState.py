@@ -482,7 +482,14 @@ class StructureState(metaclass=meta):
                             "sele": "@" + ",".join([str(i) for i in indices]),
                             "color": color_name
                         }
-                    })
+                    })                        
+                    if rep == "label":
+                        result[-1]["params"].update({
+                            "color": "grey",
+                            "radius": 3,
+                            "labelType": "format",
+                            "labelFormat": "%(atomname)s %(resname)s %(chainname)s%(resno)s"
+                        })
             if len(result):
                 results[obj] = result
         return results

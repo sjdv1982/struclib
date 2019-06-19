@@ -10,7 +10,7 @@ for lineno0, line in enumerate(visualization.splitlines()):
         line = line[:pound]
     if not len(line.strip()):
         continue
-    terms = line.split(",")
+    terms = [t.strip() for t in line.split(",")]
     try:
         firstargs = terms[0].split()
         command = firstargs[0]
@@ -25,7 +25,7 @@ for lineno0, line in enumerate(visualization.splitlines()):
     except AttributeError:
         raise SyntaxError("Line %d, unknown command '%s'" % (lineno, command))
     func(*args)
-
+    
 result = {
     "mask": struc.get_selection(format="mask"),
     "table": struc.get_selection(format="pandas").to_html(),

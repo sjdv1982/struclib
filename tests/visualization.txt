@@ -1,0 +1,13 @@
+hide
+select obj == "1ACB" and chain == "E"
+show_as hyperball
+color orange
+select obj == "1ACB" and chain == "I"
+show_as cartoon
+color green
+select obj == "1ACB" and chain == "I" and resid > 40 and resid < 50, activesite
+color red
+show hyperball
+select backbone == 1 and activesite == 1 and resid > 45
+#show spacefill
+show label
