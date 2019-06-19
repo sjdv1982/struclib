@@ -292,40 +292,54 @@ class StructureState(metaclass=meta):
         
     def select(self, query, sele=None):
         import seamless
-        pass
+        import numpy as np
+        #Bizarre bug: the following code gives an error, but not if it is launched directly from the command line.
+        # Must be in pandas/numexpr C code.
+        # Hunches of possible causes: 1. something related to multiprocessing, 2. Something related to the bool datatype,
+        #  3. Something related to globals() (local_dict solves the issue), 4. Something related to strides/memory alignment
+        # For now, use local_dict and cast all bools to ints
+        #
+        #  selearray = seamless.pandeval.eval("sele", global_dict={"sele": np.array([0,1,1,0,0,1],bool)})
         if sele is None:
             sele = self.PRIVATE_active_selection
-        self.PRIVATE_active_selection = sele        
-        import numpy as np
+        self.PRIVATE_active_selection = sele                
         old_selearray = None
         sele_state = self.atomstate.data["sele"]
         try:
-            selenr = self.PRIVATE_sele.index(sele) + 1            
-            self.PRIVATE_unselect_noshift(sele)
+            selenr = self.PRIVATE_sele.index(sele) + 1                        
+            selebit = np.uint64(1 << selenr)
+            old_selearray = (sele_state & selebit)            
         except ValueError:
             self.PRIVATE_sele.append(sele)
             selenr = len(self.PRIVATE_sele)
             maxsel = 8 * sele_state.itemsize
             if selenr >= maxsel:
                 raise ValueError("Maximum number of selections %d reached" % maxsel)
-        selebit = 1 << selenr
+        selebit = np.uint64(1 << selenr)
         dic = {key: self.atomstate.data[key] for key in self.atomstate.dtype.fields.keys() \
-               if key not in ("obj", "repr")}
+               if key not in ("obj", "repr", "sele")}
         objects = np.array([""] + self.PRIVATE_objects.data).astype("S")
         dic["all"] = np.ones(len(self.atomstate))
         dic["obj"] = objects[self.atomstate.data["obj"]]
+        dic["backbone"] = (self.atomstate.data["name"] == b"CA") | \
+                (self.atomstate.data["name"] == b"C") | \
+                (self.atomstate.data["name"] == b"O") | \
+                (self.atomstate.data["name"] == b"N")
         for xselenr0, xsele in enumerate(self.PRIVATE_sele):
             xselenr = xselenr0 + 1
             if xsele in dic or (xselenr == selenr and old_selearray is None):
                 continue
-            xselebit = 1 << xselenr
-            xselearray = (sele_state & xselebit).astype(bool)
+            xselebit = np.uint64(1 << xselenr)
+            xselearray = (sele_state & xselebit).astype(bool).astype(np.uint8)
             dic[xsele] = xselearray
         try:
-            selearray = seamless.pandeval.eval(query, global_dict=dic, align_result=False, str_as_bytes=True)
-            print("%d atoms selected" % selearray.sum())
-            sele_state[selearray] |= selebit
+            selearray = seamless.pandeval.eval(query, local_dict=dic, align_result=False, str_as_bytes=True)
+            selearray = np.ascontiguousarray(selearray).astype(bool).copy() # another Heisenbug; something is wrong with memory!
+            print("%d atoms selected" % (selearray>0).sum())
+            self.PRIVATE_unselect_noshift(sele)
+            sele_state[selearray] |=  selebit
         except:
+            import traceback; traceback.print_exc()
             if old_selearray is not None:
                 sele_state[old_selearray] |= selebit
                     
@@ -368,13 +382,16 @@ class StructureState(metaclass=meta):
         selearray = (atomstate["sele"] & selebit).astype(bool)
         return selearray
 
-    def get_selection(self, sele=None):
+    def get_selection(self, sele=None, format="mask"):
+        assert format in ("mask", "pandas")
         import numpy as np
         import pandas as pd 
         from collections import OrderedDict
         if sele is None:
             sele = self.PRIVATE_active_selection
-        sele_array = self.PRIVATE_get_sele(sele)
+        mask = self.PRIVATE_get_sele(sele)
+        if format == "mask":
+            return mask
         atomstate = self.atomstate.data
         arr_atomstate = OrderedDict()
         for key in self.atomstate.dtype.fields.keys():
@@ -387,7 +404,7 @@ class StructureState(metaclass=meta):
             elif v.dtype.kind == "S":
                 v = v.astype("U")
             arr_atomstate[key] = v
-        return pd.DataFrame(arr_atomstate).iloc[sele_array]
+        return pd.DataFrame(arr_atomstate).iloc[mask]
 
     def PRIVATE_change_repr(self, representation, sele, op):
         repr_mapping = {
@@ -465,7 +482,14 @@ class StructureState(metaclass=meta):
                             "sele": "@" + ",".join([str(i) for i in indices]),
                             "color": color_name
                         }
-                    })
+                    })                        
+                    if rep == "label":
+                        result[-1]["params"].update({
+                            "color": "grey",
+                            "radius": 3,
+                            "labelType": "format",
+                            "labelFormat": "%(atomname)s %(resname)s %(chainname)s%(resno)s"
+                        })
             if len(result):
                 results[obj] = result
         return results
