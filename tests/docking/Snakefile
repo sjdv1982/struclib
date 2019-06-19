@@ -1,0 +1,104 @@
+rule cluster_sidechains:
+   singularity:
+       #"oscar-star.simg" # for testing with Snakemake
+       "docker://oscar-star"
+   input:
+        "outputs/selected-cluster-aligned-backbone.pdb"
+   output:
+        "outputs/selected-cluster-aligned-sidechains.pdb"
+   shell:
+        "cat {input} > oscar.pdb; oscarstar oscar.pdb; cat oscar_model.pdb > {output}; rm -f oscar.pdb oscar_model.pdb"
+
+rule collect:
+    input:
+       clusterdat="outputs/selected-cluster-aligned.dat",
+       receptor="receptor.pdb",
+       ligand="ligand.pdb",
+       modes="normal-modes.dat"
+    output:
+        pdb="outputs/selected-cluster-aligned.pdb",
+        backbone="outputs/selected-cluster-aligned-backbone.pdb",
+    shell:
+        "$ATTRACTDIR/collect {input.clusterdat} {input.receptor} {input.ligand} --modes {input.modes} > {output.pdb};"
+        "$ATTRACTTOOLS/backbone {output.pdb} > {output.backbone}"
+         
+rule align:
+    input:
+        clusterdat="outputs/selected-cluster.dat",
+        bound_receptor="receptor-bound.pdb",
+        bound_ligand="ligand-bound.pdb",
+        unbound_receptor="receptor.pdb",
+        unbound_ligand="ligand.pdb",
+        modes="normal-modes.dat"
+    output:
+        "outputs/selected-cluster-aligned.dat",
+    shell:
+        "python2 $ATTRACTDIR/align-interface.py {input.clusterdat} {input.bound_receptor} {input.unbound_receptor}"
+        " {input.bound_ligand} {input.unbound_ligand} --modes {input.modes}  > {output}"
+
+rule cluster_capri:
+    input:
+        clusterdat="outputs/selected-cluster.dat",
+        bound_receptor="receptor-bound.pdb",
+        bound_ligand="ligand-bound.pdb",
+        unbound_receptor="receptor.pdb",
+        unbound_ligand="ligand.pdb",
+        modes="normal-modes.dat"
+    output:
+        lrmsd="outputs/selected-cluster.lrmsd",
+        irmsd="outputs/selected-cluster.irmsd",
+        fnat="outputs/selected-cluster.fnat",
+        stars="outputs/selected-cluster.stars"
+    shell:
+        "python2 $ATTRACTDIR/lrmsd.py {input.clusterdat}"
+        " {input.bound_ligand} {input.unbound_ligand} "
+        " --modes {input.modes} --receptor {input.unbound_receptor} | awk '{{print $2}}' > {output.lrmsd};"
+        "python2 $ATTRACTDIR/irmsd.py {input.clusterdat} {input.bound_receptor} {input.unbound_receptor}"
+        " {input.bound_ligand} {input.unbound_ligand} --modes {input.modes} | awk '{{print $2}}' > {output.irmsd};"
+        "python2 $ATTRACTDIR/fnat.py {input.clusterdat} 5 {input.bound_receptor} {input.unbound_receptor}"
+        " {input.bound_ligand} {input.unbound_ligand} --modes {input.modes} > {output.fnat};"
+        "paste {output.lrmsd} {output.irmsd} {output.fnat} | awk '{{lrmsd=$1;irmsd=$2;fnat=$3;stars=0}} fnat >= 0.1 && (lrmsd <= 10 || irmsd <= 4){{stars=1}} fnat >= 0.3 && (lrmsd <= 5 || irmsd <= 2){{stars=2}} fnat >= 0.5 && (lrmsd <= 1 || irmsd <= 1){{stars=3}}{{print stars}}' > {output.stars}"
+
+rule cluster_stats:
+    input:
+        clusters="outputs/clusters.dat",
+        selected="params/selected-cluster",
+        clustering="outputs/docking-result.clust",
+        clusterdat="outputs/selected-cluster.dat"
+    output:
+        ene="outputs/selected-cluster.ene",
+        rank="outputs/selected-cluster.rank",
+        size="outputs/selected-cluster.size"
+    shell:
+        "grep Energy {input.clusterdat} | awk '{{print $3}}' > {output.ene};"
+        "grep '=> cluster' {input.clusterdat} | awk '{{print $(NF-2)}}' > {output.rank};"
+        "selected=$(awk '{{print $1}}' {input.selected});"
+        "awk -v selected=$selected 'NR == selected {{print NF-3}}' {input.clustering} > {output.size}"
+        
+
+rule select_cluster:
+    input:
+        clusters="outputs/clusters.dat",
+        selected="params/selected-cluster"
+    output:
+        "outputs/selected-cluster.dat"
+    shell:
+        "python2 $ATTRACTTOOLS/select-structures.py {input.clusters} -f {input.selected} > {output}"        
+        
+rule cluster_struc:
+    input:
+        result="docking-result.dat",
+        pairwise_lrmsd="docking-result-pairwise-lrmsd.txt",
+        radius="params/cluster-cutoff"
+    output:
+        clustering="outputs/docking-result.clust",
+        clusters="outputs/clusters.dat",
+    shell:
+        "$ATTRACTDIR/cluster_struc {input.pairwise_lrmsd} `cat {input.radius}` 5 > {output.clustering};"
+        "python2 $ATTRACTTOOLS/cluster2dat.py {output.clustering} {input.result} --best > {output.clusters}"
+        
+rule all:
+    input:
+        rules.cluster_stats.output, 
+        rules.cluster_capri.output,
+        rules.cluster_sidechains.output,
