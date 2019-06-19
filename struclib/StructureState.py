@@ -323,7 +323,7 @@ class StructureState(metaclass=meta):
             dic[xsele] = xselearray
         try:
             selearray = seamless.pandeval.eval(query, global_dict=dic, align_result=False, str_as_bytes=True)
-            print("%d atoms selected" % selearray.sum())
+            #print("%d atoms selected" % selearray.sum())
             sele_state[selearray] |= selebit
         except:
             if old_selearray is not None:
@@ -368,13 +368,16 @@ class StructureState(metaclass=meta):
         selearray = (atomstate["sele"] & selebit).astype(bool)
         return selearray
 
-    def get_selection(self, sele=None):
+    def get_selection(self, sele=None, format="mask"):
+        assert format in ("mask", "pandas")
         import numpy as np
         import pandas as pd 
         from collections import OrderedDict
         if sele is None:
             sele = self.PRIVATE_active_selection
-        sele_array = self.PRIVATE_get_sele(sele)
+        mask = self.PRIVATE_get_sele(sele)
+        if format == "mask":
+            return mask
         atomstate = self.atomstate.data
         arr_atomstate = OrderedDict()
         for key in self.atomstate.dtype.fields.keys():
@@ -387,7 +390,7 @@ class StructureState(metaclass=meta):
             elif v.dtype.kind == "S":
                 v = v.astype("U")
             arr_atomstate[key] = v
-        return pd.DataFrame(arr_atomstate).iloc[sele_array]
+        return pd.DataFrame(arr_atomstate).iloc[mask]
 
     def PRIVATE_change_repr(self, representation, sele, op):
         repr_mapping = {
