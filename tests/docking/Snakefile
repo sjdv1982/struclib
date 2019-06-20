@@ -13,13 +13,12 @@ rule collect:
     input:
        clusterdat="outputs/selected-cluster-aligned.dat",
        receptor="receptor.pdb",
-       ligand="ligand.pdb",
-       modes="normal-modes.dat"
+       ligand="ligand.pdb"
     output:
         pdb="outputs/selected-cluster-aligned.pdb",
         backbone="outputs/selected-cluster-aligned-backbone.pdb",
     shell:
-        "$ATTRACTDIR/collect {input.clusterdat} {input.receptor} {input.ligand} --modes {input.modes} > {output.pdb};"
+        "$ATTRACTDIR/collect {input.clusterdat} {input.receptor} {input.ligand} > {output.pdb};"
         "$ATTRACTTOOLS/backbone {output.pdb} > {output.backbone}"
          
 rule align:
@@ -29,12 +28,11 @@ rule align:
         bound_ligand="ligand-bound.pdb",
         unbound_receptor="receptor.pdb",
         unbound_ligand="ligand.pdb",
-        modes="normal-modes.dat"
     output:
         "outputs/selected-cluster-aligned.dat",
     shell:
         "python2 $ATTRACTDIR/align-interface.py {input.clusterdat} {input.bound_receptor} {input.unbound_receptor}"
-        " {input.bound_ligand} {input.unbound_ligand} --modes {input.modes}  > {output}"
+        " {input.bound_ligand} {input.unbound_ligand}  > {output}"
 
 rule cluster_capri:
     input:
@@ -42,8 +40,7 @@ rule cluster_capri:
         bound_receptor="receptor-bound.pdb",
         bound_ligand="ligand-bound.pdb",
         unbound_receptor="receptor.pdb",
-        unbound_ligand="ligand.pdb",
-        modes="normal-modes.dat"
+        unbound_ligand="ligand.pdb"
     output:
         lrmsd="outputs/selected-cluster.lrmsd",
         irmsd="outputs/selected-cluster.irmsd",
@@ -52,11 +49,11 @@ rule cluster_capri:
     shell:
         "python2 $ATTRACTDIR/lrmsd.py {input.clusterdat}"
         " {input.bound_ligand} {input.unbound_ligand} "
-        " --modes {input.modes} --receptor {input.unbound_receptor} | awk '{{print $2}}' > {output.lrmsd};"
+        " --receptor {input.unbound_receptor} | awk '{{print $2}}' > {output.lrmsd};"
         "python2 $ATTRACTDIR/irmsd.py {input.clusterdat} {input.bound_receptor} {input.unbound_receptor}"
-        " {input.bound_ligand} {input.unbound_ligand} --modes {input.modes} | awk '{{print $2}}' > {output.irmsd};"
+        " {input.bound_ligand} {input.unbound_ligand} | awk '{{print $2}}' > {output.irmsd};"
         "python2 $ATTRACTDIR/fnat.py {input.clusterdat} 5 {input.bound_receptor} {input.unbound_receptor}"
-        " {input.bound_ligand} {input.unbound_ligand} --modes {input.modes} > {output.fnat};"
+        " {input.bound_ligand} {input.unbound_ligand} > {output.fnat};"
         "paste {output.lrmsd} {output.irmsd} {output.fnat} | awk '{{lrmsd=$1;irmsd=$2;fnat=$3;stars=0}} fnat >= 0.1 && (lrmsd <= 10 || irmsd <= 4){{stars=1}} fnat >= 0.3 && (lrmsd <= 5 || irmsd <= 2){{stars=2}} fnat >= 0.5 && (lrmsd <= 1 || irmsd <= 1){{stars=3}}{{print stars}}' > {output.stars}"
 
 rule cluster_stats:
