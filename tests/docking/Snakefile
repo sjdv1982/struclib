@@ -7,7 +7,7 @@ rule cluster_sidechains:
    output:
         "outputs/selected-cluster-aligned-sidechains.pdb"
    shell:
-        "cat {input} > oscar.pdb; oscarstar oscar.pdb; cat oscar_model.pdb > {output}; rm -f oscar.pdb oscar_model.pdb"
+        "cat {input} > oscar.pdb; oscarstar oscar.pdb; cat oscar_model.pdb > {output}; rm -f oscar.pdb oscar_model.pdb gmon.out result"
 
 rule collect:
     input:
@@ -101,4 +101,8 @@ rule all:
     input:
         rules.cluster_stats.output, 
         rules.cluster_capri.output,
-        rules.cluster_sidechains.output,
+        rules.cluster_sidechains.output
+
+rule test:
+    input:
+        rules.cluster_struc.output

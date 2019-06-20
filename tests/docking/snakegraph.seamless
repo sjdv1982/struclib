@@ -1,0 +1,733 @@
+{
+  "connections": [
+    {
+      "source": [
+        "rules",
+        "cluster_stats"
+      ],
+      "target": [
+        "jobs",
+        "cluster_stats",
+        "code"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "outputs/clusters.dat"
+      ],
+      "target": [
+        "jobs",
+        "cluster_stats",
+        "inputfile_clusters"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "params/selected-cluster"
+      ],
+      "target": [
+        "jobs",
+        "cluster_stats",
+        "inputfile_selected"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "outputs/docking-result.clust"
+      ],
+      "target": [
+        "jobs",
+        "cluster_stats",
+        "inputfile_clustering"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "outputs/selected-cluster.dat"
+      ],
+      "target": [
+        "jobs",
+        "cluster_stats",
+        "inputfile_clusterdat"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "jobs",
+        "cluster_stats"
+      ],
+      "target": [
+        "results",
+        "cluster_stats"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_stats",
+        "outputfile_ene"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster.ene"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_stats",
+        "outputfile_rank"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster.rank"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_stats",
+        "outputfile_size"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster.size"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "rules",
+        "cluster_capri"
+      ],
+      "target": [
+        "jobs",
+        "cluster_capri",
+        "code"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "outputs/selected-cluster.dat"
+      ],
+      "target": [
+        "jobs",
+        "cluster_capri",
+        "inputfile_clusterdat"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "receptor-bound.pdb"
+      ],
+      "target": [
+        "jobs",
+        "cluster_capri",
+        "inputfile_bound_receptor"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "ligand-bound.pdb"
+      ],
+      "target": [
+        "jobs",
+        "cluster_capri",
+        "inputfile_bound_ligand"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "receptor.pdb"
+      ],
+      "target": [
+        "jobs",
+        "cluster_capri",
+        "inputfile_unbound_receptor"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "ligand.pdb"
+      ],
+      "target": [
+        "jobs",
+        "cluster_capri",
+        "inputfile_unbound_ligand"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "normal-modes.dat"
+      ],
+      "target": [
+        "jobs",
+        "cluster_capri",
+        "inputfile_modes"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "jobs",
+        "cluster_capri"
+      ],
+      "target": [
+        "results",
+        "cluster_capri"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_capri",
+        "outputfile_lrmsd"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster.lrmsd"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_capri",
+        "outputfile_irmsd"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster.irmsd"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_capri",
+        "outputfile_fnat"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster.fnat"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_capri",
+        "outputfile_stars"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster.stars"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "rules",
+        "cluster_struc"
+      ],
+      "target": [
+        "jobs",
+        "cluster_struc",
+        "code"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "docking-result.dat"
+      ],
+      "target": [
+        "jobs",
+        "cluster_struc",
+        "inputfile_result"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "docking-result-pairwise-lrmsd.txt"
+      ],
+      "target": [
+        "jobs",
+        "cluster_struc",
+        "inputfile_pairwise_lrmsd"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "params/cluster-cutoff"
+      ],
+      "target": [
+        "jobs",
+        "cluster_struc",
+        "inputfile_radius"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "jobs",
+        "cluster_struc"
+      ],
+      "target": [
+        "results",
+        "cluster_struc"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_struc",
+        "outputfile_clustering"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/docking-result.clust"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_struc",
+        "outputfile_clusters"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/clusters.dat"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "rules",
+        "select_cluster"
+      ],
+      "target": [
+        "jobs",
+        "select_cluster",
+        "code"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "outputs/clusters.dat"
+      ],
+      "target": [
+        "jobs",
+        "select_cluster",
+        "inputfile_clusters"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "params/selected-cluster"
+      ],
+      "target": [
+        "jobs",
+        "select_cluster",
+        "inputfile_selected"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "jobs",
+        "select_cluster"
+      ],
+      "target": [
+        "results",
+        "select_cluster"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "select_cluster"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster.dat"
+      ],
+      "type": "connection"
+    }
+  ],
+  "nodes": [
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "value": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99"
+      },
+      "datatype": "mixed",
+      "path": [
+        "filesystem"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "path": [
+        "jobs"
+      ],
+      "type": "context"
+    },
+    {
+      "INPUT": "inp",
+      "RESULT": "result",
+      "SCHEMA": null,
+      "buffered": true,
+      "checksum": {
+        "code": "6fc1ce763c5f63bea76e0bb3ec65806c144834d9cab0495774e11dbbcedf7e5d",
+        "input": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99",
+        "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "compiled": false,
+      "debug": false,
+      "file_extension": "sh",
+      "language": "bash",
+      "path": [
+        "jobs",
+        "cluster_capri"
+      ],
+      "pins": {
+        "inputfile_bound_ligand": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_bound_receptor": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_clusterdat": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_modes": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_unbound_ligand": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_unbound_receptor": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        }
+      },
+      "plain": false,
+      "plain_result": false,
+      "type": "transformer",
+      "with_result": true
+    },
+    {
+      "INPUT": "inp",
+      "RESULT": "result",
+      "SCHEMA": null,
+      "buffered": true,
+      "checksum": {
+        "code": "fa4dffadc6c004ccea089f4cc9f9c8ff5aa90ce88874352699d7e0fb81773ee1",
+        "input": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99",
+        "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "compiled": false,
+      "debug": false,
+      "file_extension": "sh",
+      "language": "bash",
+      "path": [
+        "jobs",
+        "cluster_stats"
+      ],
+      "pins": {
+        "inputfile_clusterdat": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_clustering": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_clusters": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_selected": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        }
+      },
+      "plain": false,
+      "plain_result": false,
+      "type": "transformer",
+      "with_result": true
+    },
+    {
+      "INPUT": "inp",
+      "RESULT": "result",
+      "SCHEMA": null,
+      "buffered": true,
+      "checksum": {
+        "code": "f14223e9283df877e218088b70ebdb823519af25e4d6dcde816257e8055c8707",
+        "input": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99",
+        "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "compiled": false,
+      "debug": false,
+      "file_extension": "sh",
+      "language": "bash",
+      "path": [
+        "jobs",
+        "cluster_struc"
+      ],
+      "pins": {
+        "inputfile_pairwise_lrmsd": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_radius": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_result": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        }
+      },
+      "plain": false,
+      "plain_result": false,
+      "type": "transformer",
+      "with_result": true
+    },
+    {
+      "INPUT": "inp",
+      "RESULT": "result",
+      "SCHEMA": null,
+      "buffered": true,
+      "checksum": {
+        "code": "2d84d981202af070aa4fcdd7a3ed30c16dfe074dd6f79bd3cd1b42678947e58f",
+        "input": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99",
+        "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "compiled": false,
+      "debug": false,
+      "file_extension": "sh",
+      "language": "bash",
+      "path": [
+        "jobs",
+        "select_cluster"
+      ],
+      "pins": {
+        "inputfile_clusters": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_selected": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        }
+      },
+      "plain": false,
+      "plain_result": false,
+      "type": "transformer",
+      "with_result": true
+    },
+    {
+      "path": [
+        "results"
+      ],
+      "type": "context"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "datatype": "mixed",
+      "path": [
+        "results",
+        "cluster_capri"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "datatype": "mixed",
+      "path": [
+        "results",
+        "cluster_stats"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "datatype": "mixed",
+      "path": [
+        "results",
+        "cluster_struc"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "datatype": "mixed",
+      "path": [
+        "results",
+        "select_cluster"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "path": [
+        "results2"
+      ],
+      "type": "context"
+    },
+    {
+      "path": [
+        "rules"
+      ],
+      "type": "context"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "value": "0c3a0e0438d051a6b38ddddfd09b63c8200776f27012839469c9799f3f6de8ae"
+      },
+      "datatype": "mixed",
+      "path": [
+        "rules",
+        "cluster_capri"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "value": "e67b55ac395ed808ab5aea5d8ff94f0cab27113ae614b95a8faf90b9ec8227c6"
+      },
+      "datatype": "mixed",
+      "path": [
+        "rules",
+        "cluster_stats"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "value": "d2d6274fe72f5dd87c58e468bec1e1413528310fb2574bddc40402de29f83dd7"
+      },
+      "datatype": "mixed",
+      "path": [
+        "rules",
+        "cluster_struc"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "value": "279449bb47c0c709c95cdb77358d0f4f05a2f0a7bd0609bb708fc9c70fb4c2a9"
+      },
+      "datatype": "mixed",
+      "path": [
+        "rules",
+        "select_cluster"
+      ],
+      "silk": true,
+      "type": "cell"
+    }
+  ],
+  "params": {
+    "from_lib": null
+  }
+}
