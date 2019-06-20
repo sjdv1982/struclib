@@ -50,10 +50,10 @@ rule cluster_capri:
         "python2 $ATTRACTDIR/lrmsd.py {input.clusterdat}"
         " {input.bound_ligand} {input.unbound_ligand} "
         " --receptor {input.unbound_receptor} | awk '{{print $2}}' > {output.lrmsd};"
-        "python2 $ATTRACTDIR/irmsd.py {input.clusterdat} {input.bound_receptor} {input.unbound_receptor}"
-        " {input.bound_ligand} {input.unbound_ligand} | awk '{{print $2}}' > {output.irmsd};"
-        "python2 $ATTRACTDIR/fnat.py {input.clusterdat} 5 {input.bound_receptor} {input.unbound_receptor}"
-        " {input.bound_ligand} {input.unbound_ligand} > {output.fnat};"
+        "python2 $ATTRACTDIR/irmsd.py {input.clusterdat} {input.unbound_receptor} {input.bound_receptor}"
+        " {input.unbound_ligand} {input.bound_ligand} | awk '{{print $2}}' > {output.irmsd};"
+        "python2 $ATTRACTDIR/fnat.py {input.clusterdat} 5 {input.unbound_receptor} {input.bound_receptor}"
+        " {input.unbound_ligand} {input.bound_ligand} > {output.fnat};"
         "paste {output.lrmsd} {output.irmsd} {output.fnat} | awk '{{lrmsd=$1;irmsd=$2;fnat=$3;stars=0}} fnat >= 0.1 && (lrmsd <= 10 || irmsd <= 4){{stars=1}} fnat >= 0.3 && (lrmsd <= 5 || irmsd <= 2){{stars=2}} fnat >= 0.5 && (lrmsd <= 1 || irmsd <= 1){{stars=3}}{{print stars}}' > {output.stars}"
 
 rule cluster_stats:
@@ -91,15 +91,12 @@ rule cluster_struc:
         clustering="outputs/docking-result.clust",
         clusters="outputs/clusters.dat",
     shell:
-        "$ATTRACTDIR/cluster_struc {input.pairwise_lrmsd} `cat {input.radius}` 5 > {output.clustering};"
-        "python2 $ATTRACTTOOLS/cluster2dat.py {output.clustering} {input.result} --best > {output.clusters}"
+        "$ATTRACTDIR/cluster_struc {input.pairwise_lrmsd} `cat {input.radius}` 1 > {output.clustering};"
+        "python2 $ATTRACTTOOLS/cluster2dat.py {output.clustering} {input.result} --best |"
+        " python2 $ATTRACTTOOLS/sort.py /dev/stdin > {output.clusters}"
         
 rule all:
     input:
         rules.cluster_stats.output, 
         rules.cluster_capri.output,
         rules.cluster_sidechains.output
-
-rule test:
-    input:
-        rules.cluster_struc.output

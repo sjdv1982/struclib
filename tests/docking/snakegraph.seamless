@@ -181,18 +181,6 @@
     },
     {
       "source": [
-        "filesystem",
-        "normal-modes.dat"
-      ],
-      "target": [
-        "jobs",
-        "cluster_capri",
-        "inputfile_modes"
-      ],
-      "type": "connection"
-    },
-    {
-      "source": [
         "jobs",
         "cluster_capri"
       ],
@@ -247,6 +235,52 @@
       "target": [
         "filesystem",
         "outputs/selected-cluster.stars"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "rules",
+        "cluster_sidechains"
+      ],
+      "target": [
+        "jobs",
+        "cluster_sidechains",
+        "code"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "outputs/selected-cluster-aligned-backbone.pdb"
+      ],
+      "target": [
+        "jobs",
+        "cluster_sidechains",
+        "inputfile"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "jobs",
+        "cluster_sidechains"
+      ],
+      "target": [
+        "results",
+        "cluster_sidechains"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "cluster_sidechains"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster-aligned-sidechains.pdb"
       ],
       "type": "connection"
     },
@@ -390,6 +424,183 @@
         "outputs/selected-cluster.dat"
       ],
       "type": "connection"
+    },
+    {
+      "source": [
+        "rules",
+        "collect"
+      ],
+      "target": [
+        "jobs",
+        "collect",
+        "code"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "outputs/selected-cluster-aligned.dat"
+      ],
+      "target": [
+        "jobs",
+        "collect",
+        "inputfile_clusterdat"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "receptor.pdb"
+      ],
+      "target": [
+        "jobs",
+        "collect",
+        "inputfile_receptor"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "ligand.pdb"
+      ],
+      "target": [
+        "jobs",
+        "collect",
+        "inputfile_ligand"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "jobs",
+        "collect"
+      ],
+      "target": [
+        "results",
+        "collect"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "collect",
+        "outputfile_pdb"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster-aligned.pdb"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "collect",
+        "outputfile_backbone"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster-aligned-backbone.pdb"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "rules",
+        "align"
+      ],
+      "target": [
+        "jobs",
+        "align",
+        "code"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "outputs/selected-cluster.dat"
+      ],
+      "target": [
+        "jobs",
+        "align",
+        "inputfile_clusterdat"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "receptor-bound.pdb"
+      ],
+      "target": [
+        "jobs",
+        "align",
+        "inputfile_bound_receptor"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "ligand-bound.pdb"
+      ],
+      "target": [
+        "jobs",
+        "align",
+        "inputfile_bound_ligand"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "receptor.pdb"
+      ],
+      "target": [
+        "jobs",
+        "align",
+        "inputfile_unbound_receptor"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "filesystem",
+        "ligand.pdb"
+      ],
+      "target": [
+        "jobs",
+        "align",
+        "inputfile_unbound_ligand"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "jobs",
+        "align"
+      ],
+      "target": [
+        "results",
+        "align"
+      ],
+      "type": "connection"
+    },
+    {
+      "source": [
+        "results",
+        "align"
+      ],
+      "target": [
+        "filesystem",
+        "outputs/selected-cluster-aligned.dat"
+      ],
+      "type": "connection"
     }
   ],
   "nodes": [
@@ -419,7 +630,58 @@
       "SCHEMA": null,
       "buffered": true,
       "checksum": {
-        "code": "6fc1ce763c5f63bea76e0bb3ec65806c144834d9cab0495774e11dbbcedf7e5d",
+        "code": "f891b00140c6aabb0d13c23cbb6d13951cb7b1ac4fddb09559625495089b875e",
+        "input": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99",
+        "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "compiled": false,
+      "debug": false,
+      "file_extension": "sh",
+      "language": "bash",
+      "path": [
+        "jobs",
+        "align"
+      ],
+      "pins": {
+        "inputfile_bound_ligand": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_bound_receptor": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_clusterdat": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_unbound_ligand": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_unbound_receptor": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        }
+      },
+      "plain": false,
+      "plain_result": false,
+      "type": "transformer",
+      "with_result": true
+    },
+    {
+      "INPUT": "inp",
+      "RESULT": "result",
+      "SCHEMA": null,
+      "buffered": true,
+      "checksum": {
+        "code": "249ac8782c8937791f2cbddb3870376bf9bd4f3320c35f866f7b011e55c3c96d",
         "input": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99",
         "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
         "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
@@ -448,17 +710,53 @@
           "content_type": null,
           "transfer_mode": "copy"
         },
-        "inputfile_modes": {
-          "access_mode": "default",
-          "content_type": null,
-          "transfer_mode": "copy"
-        },
         "inputfile_unbound_ligand": {
           "access_mode": "default",
           "content_type": null,
           "transfer_mode": "copy"
         },
         "inputfile_unbound_receptor": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        }
+      },
+      "plain": false,
+      "plain_result": false,
+      "type": "transformer",
+      "with_result": true
+    },
+    {
+      "INPUT": "inp",
+      "RESULT": "result",
+      "SCHEMA": null,
+      "buffered": true,
+      "checksum": {
+        "code": "afc9acd2364e294ca1cd8b211f92522c5ac4b83f5266a9524cac1b8b6d986620",
+        "input": "60c44aaaabba98e81cbde78da6f7dc3f42d943fa833b92f84bbe314da0577c47",
+        "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "compiled": false,
+      "debug": false,
+      "file_extension": "sh",
+      "language": "docker",
+      "path": [
+        "jobs",
+        "cluster_sidechains"
+      ],
+      "pins": {
+        "docker_image": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "docker_options": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile": {
           "access_mode": "default",
           "content_type": null,
           "transfer_mode": "copy"
@@ -521,7 +819,7 @@
       "SCHEMA": null,
       "buffered": true,
       "checksum": {
-        "code": "f14223e9283df877e218088b70ebdb823519af25e4d6dcde816257e8055c8707",
+        "code": "9f32ffa3e0c3c5db8c0dc009a085f9a0c3dce24dbee57f6baf9ae5834160eb2b",
         "input": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99",
         "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
         "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
@@ -546,6 +844,47 @@
           "transfer_mode": "copy"
         },
         "inputfile_result": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        }
+      },
+      "plain": false,
+      "plain_result": false,
+      "type": "transformer",
+      "with_result": true
+    },
+    {
+      "INPUT": "inp",
+      "RESULT": "result",
+      "SCHEMA": null,
+      "buffered": true,
+      "checksum": {
+        "code": "295815dd4bbc4dd7c15118ed9f6bcc577a729b7c93cff05ed06df29b7c6abad1",
+        "input": "840eb7aa2a9935de63366bacbe9d97e978a859e93dc792a0334de60ed52f8e99",
+        "result_schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "compiled": false,
+      "debug": false,
+      "file_extension": "sh",
+      "language": "bash",
+      "path": [
+        "jobs",
+        "collect"
+      ],
+      "pins": {
+        "inputfile_clusterdat": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_ligand": {
+          "access_mode": "default",
+          "content_type": null,
+          "transfer_mode": "copy"
+        },
+        "inputfile_receptor": {
           "access_mode": "default",
           "content_type": null,
           "transfer_mode": "copy"
@@ -607,7 +946,35 @@
       "datatype": "mixed",
       "path": [
         "results",
+        "align"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "datatype": "mixed",
+      "path": [
+        "results",
         "cluster_capri"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "datatype": "mixed",
+      "path": [
+        "results",
+        "cluster_sidechains"
       ],
       "silk": true,
       "type": "cell"
@@ -636,6 +1003,20 @@
       "path": [
         "results",
         "cluster_struc"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c"
+      },
+      "datatype": "mixed",
+      "path": [
+        "results",
+        "collect"
       ],
       "silk": true,
       "type": "cell"
@@ -671,12 +1052,42 @@
       "celltype": "structured",
       "checksum": {
         "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
-        "value": "0c3a0e0438d051a6b38ddddfd09b63c8200776f27012839469c9799f3f6de8ae"
+        "value": "2d61032471f042a1dfd5e6b2ccf2a3a23e9ed56c8f00362de5547a43b2ce1e0b"
+      },
+      "datatype": "mixed",
+      "path": [
+        "rules",
+        "align"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "value": "5eb0939e24f10b4d4d19acd1fcaefeeffcad2f56ce88db4638ede686c24ccb27"
       },
       "datatype": "mixed",
       "path": [
         "rules",
         "cluster_capri"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "value": "473d42d52ca9bed0df6aced90110e5833ef3af4cedd94fd3fbe3e119ccfba62c"
+      },
+      "datatype": "mixed",
+      "path": [
+        "rules",
+        "cluster_sidechains"
       ],
       "silk": true,
       "type": "cell"
@@ -701,12 +1112,27 @@
       "celltype": "structured",
       "checksum": {
         "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
-        "value": "d2d6274fe72f5dd87c58e468bec1e1413528310fb2574bddc40402de29f83dd7"
+        "value": "8f352d40dada4ff358a9926cd88a92b45d8a601e572d477139bcc4e510de0a4f"
       },
       "datatype": "mixed",
       "path": [
         "rules",
         "cluster_struc"
+      ],
+      "silk": true,
+      "type": "cell"
+    },
+    {
+      "buffered": true,
+      "celltype": "structured",
+      "checksum": {
+        "schema": "d0a1b2af1705c1b8495b00145082ef7470384e62ac1c4d9b9cdbbe0476c28f8c",
+        "value": "f451ad1d7bc8be756b0285b21ecf91e2d2bb19ca3761ded6c4960c8851120d11"
+      },
+      "datatype": "mixed",
+      "path": [
+        "rules",
+        "collect"
       ],
       "silk": true,
       "type": "cell"

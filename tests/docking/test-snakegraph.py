@@ -11,7 +11,7 @@ Except for the output of oscar-star, which is non-deterministic,
  all results should be the same
 """
 import seamless
-from seamless.highlevel import Context
+from seamless.highlevel import Context, Cell
 import json, os
 
 cache = seamless.RedisCache()
@@ -21,6 +21,16 @@ graph = json.load(open("snakegraph.seamless"))
 ctx = seamless.highlevel.load_graph(graph)
 
 print("Bind files...")
+
+# HACK: Keep the large pairwise lrmsd file out of the virtual file system
+# To be eliminated when deep cells are there in Seamless
+ctx.pw_lrmsd = Cell()
+file = "docking-result-pairwise-lrmsd.txt"
+print(file)
+data = open(file).read()
+ctx.pw_lrmsd = data
+ctx.jobs.cluster_struc.inputfile_pairwise_lrmsd = ctx.pw_lrmsd
+
 inputs = (
     "params/cluster-cutoff",
     "params/selected-cluster",
@@ -28,9 +38,8 @@ inputs = (
     "ligand.pdb",
     "receptor-bound.pdb",
     "ligand-bound.pdb",
-    "normal-modes.dat",
     "docking-result.dat",
-    "docking-result-pairwise-lrmsd.txt"
+    #"docking-result-pairwise-lrmsd.txt"
 )
 for file in inputs:
     print(file)
