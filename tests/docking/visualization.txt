@@ -1,0 +1,17 @@
+select all
+show_as cartoon
+show licorice
+select obj=="bound" and chain=="A"
+color magenta
+select obj=="pdb_backbone" and chain=="A"
+color yellow
+select obj=="pdb_sidechain" and chain=="A"
+color yellow
+select obj=="bound" and chain=="A"
+color blue
+select obj=="pdb_backbone" and chain=="B"
+color green
+select obj=="pdb_sidechain" and chain=="B"
+color green
+select resid == 84
+show spacefill

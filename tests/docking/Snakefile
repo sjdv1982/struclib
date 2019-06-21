@@ -7,7 +7,7 @@ rule cluster_sidechains:
    output:
         "outputs/selected-cluster-aligned-sidechains.pdb"
    shell:
-        "cat {input} > oscar.pdb; oscarstar oscar.pdb; cat oscar_model.pdb > {output}; rm -f oscar.pdb oscar_model.pdb gmon.out result"
+        "cat {input} > oscar.pdb; oscarstar oscar.pdb > /dev/stderr; cat oscar_model.pdb > {output}; rm -f oscar.pdb oscar_model.pdb gmon.out result"
 
 rule collect:
     input:
